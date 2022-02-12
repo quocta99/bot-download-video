@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 
 const { getLinkVideoFacebook, getLinkVideoYoutube } = require('./service')
 
@@ -9,6 +9,11 @@ app.get('/', (req, res) => {
 })
 
 app.get('/downloader', async (req, res) => {
+    if(req?.query?.url == undefined) {
+        return res.json({
+            message: "Url is required"
+        })
+    }
     const result = req?.query?.type == 'facebook' 
         ? await getLinkVideoFacebook(req?.query?.url || '')
         : await getLinkVideoYoutube(req?.query?.url)
