@@ -28,18 +28,27 @@ app.get('/', (req, res) => {
 })
 
 app.get('/downloader', async (req, res) => {
-    if(req?.query?.url == undefined) {
+    try {
+        if(req?.query?.url == undefined) {
+            return res.json({
+                message: "Url is required"
+            })
+        }
+        const result = req?.query?.type == 'facebook' 
+            ? await getLinkVideoFacebook(req?.query?.url || '')
+            : await getLinkVideoYoutube(req?.query?.url)
         return res.json({
-            message: "Url is required"
+            message: 'Loaded successfully!',
+            result
+        })
+    } catch (error) {
+        return res.json({
+            message: 'Loaded error!',
+            result: {
+                error: error.message
+            }
         })
     }
-    const result = req?.query?.type == 'facebook' 
-        ? await getLinkVideoFacebook(req?.query?.url || '')
-        : await getLinkVideoYoutube(req?.query?.url)
-    return res.json({
-        message: 'Loaded successfully!',
-        result
-    })
 })
 
 app.listen(port, () => {
